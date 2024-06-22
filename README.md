@@ -7,4 +7,5 @@ Student Grade Tracker
 Develop a program that allows a teacher to enter students' grades and compute their average, highest, and lowest scores. You can use arrays or ArrayLists to store the student data.
 
 **TASK 2**
+A Simple Banking Application in Java is an ideal project for coding beginners. It covers fundamental concepts like the Scanner class for input, strings, loops, methods, and conditional statements. This project involves basic banking operations such as deposits, withdrawals, checking balances, and exiting the program.
 
