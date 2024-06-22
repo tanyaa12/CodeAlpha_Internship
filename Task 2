@@ -1,0 +1,96 @@
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+public class BankingApplication {
+    private static double balance = 0;
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        boolean exit = false;
+
+        while (!exit) {
+            System.out.println("\nWelcome to the Banking Application!");
+            System.out.println("1. Check Balance");
+            System.out.println("2. Deposit");
+            System.out.println("3. Withdraw");
+            System.out.println("4. Exit");
+
+            System.out.print("Enter your choice: ");
+            int choice = getValidChoice();
+
+            switch (choice) {
+                case 1:
+                    checkBalance();
+                    break;
+                case 2:
+                    deposit();
+                    break;
+                case 3:
+                    withdraw();
+                    break;
+                case 4:
+                    exit = true;
+                    System.out.println("Thank you for using the Banking Application!");
+                    break;
+                default:
+                    System.out.println("Invalid choice! Please try again.");
+            }
+        }
+    }
+
+    private static int getValidChoice() {
+        int choice;
+        while (true) {
+            try {
+                choice = scanner.nextInt();
+                if (choice < 1 || choice > 4) {
+                    System.out.print("Invalid choice! Please enter a number between 1 and 4: ");
+                } else {
+                    return choice;
+                }
+            } catch (InputMismatchException e) {
+                System.out.print("Invalid input! Please enter a valid number: ");
+                scanner.next();
+            }
+        }
+    }
+
+    private static void checkBalance() {
+        System.out.println("Your current balance is: $" + String.format("%.2f", balance));
+    }
+
+    private static void deposit() {
+        System.out.print("Enter the amount to deposit: $");
+        double amount = getValidAmount();
+        balance += amount;
+        System.out.println("Deposit successful! Your new balance is: $" + String.format("%.2f", balance));
+    }
+
+    private static void withdraw() {
+        System.out.print("Enter the amount to withdraw: $");
+        double amount = getValidAmount();
+        if (amount > balance) {
+            System.out.println("Insufficient balance! Cannot withdraw $" + String.format("%.2f", amount));
+        } else {
+            balance -= amount;
+            System.out.println("Withdrawal successful! Your new balance is: $" + String.format("%.2f", balance));
+        }
+    }
+
+    private static double getValidAmount() {
+        double amount;
+        while (true) {
+            try {
+                amount = scanner.nextDouble();
+                if (amount < 0) {
+                    System.out.print("Invalid amount! Please enter a positive number: ");
+                } else {
+                    return amount;
+                }
+            } catch (InputMismatchException e) {
+                System.out.print("Invalid input! Please enter a valid number: ");
+                scanner.next();
+            }
+        }
+    }
+}
