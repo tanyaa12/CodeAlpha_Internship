@@ -1,0 +1,45 @@
+package service;
+
+
+import model.Room;
+import java.util.ArrayList;
+import java.util.List;
+
+public class RoomService {
+    private List<Room> rooms;
+
+    public RoomService() {
+        this.rooms = new ArrayList<>();
+        // Initialize with some rooms
+        rooms.add(new Room(1, "Single", true, 100));
+        rooms.add(new Room(2, "Double", true, 150));
+        rooms.add(new Room(3, "Suite", true, 250));
+    }
+
+    public List<Room> searchAvailableRooms(String type) {
+        List<Room> availableRooms = new ArrayList<>();
+        for (Room room : rooms) {
+            if (room.isAvailable() && room.getType().equalsIgnoreCase(type)) {
+                availableRooms.add(room);
+            }
+        }
+        return availableRooms;
+    }
+
+    public Room getRoomById(int id) {
+        for (Room room : rooms) {
+            if (room.getId() == id) {
+                return room;
+            }
+        }
+        return null;
+    }
+
+    public void updateRoomAvailability(int roomId, boolean isAvailable) {
+        Room room = getRoomById(roomId);
+        if (room != null) {
+            room.setAvailable(isAvailable);
+        }
+    }
+}
+
