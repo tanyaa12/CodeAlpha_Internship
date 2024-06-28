@@ -1,0 +1,100 @@
+import model.Reservation;
+import model.Room;
+import service.RoomService;
+import service.ReservationService;
+import service.PaymentService;
+import util.Database;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        RoomService roomService = new RoomService();
+        ReservationService reservationService = new ReservationService(roomService);
+        PaymentService paymentService = new PaymentService();
+        Database database = new Database();
+        Scanner scanner = new Scanner(System.in);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        System.out.println("Welcome to the Hotel Reservation System!");
+
+        while (true) {
+            System.out.println("\n1. Search Available Rooms");
+            System.out.println("2. Make a Reservation");
+            System.out.println("3. View Booking Details");
+            System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter room type (Single/Double/Suite): ");
+                    String type = scanner.next();
+                    List<Room> availableRooms = roomService.searchAvailableRooms(type);
+                    if (availableRooms.isEmpty()) {
+                        System.out.println("No available rooms of this type.");
+                    } else {
+                        System.out.println("Available Rooms:");
+                        for (Room room : availableRooms) {
+                            System.out.println("Room ID: " + room.getId() + ", Price: $" + room.getPrice());
+                        }
+                    }
+                    break;
+
+                case 2:
+                    System.out.print("Enter your User ID: ");
+                    int userId = scanner.nextInt();
+                    System.out.print("Enter Room ID: ");
+                    int roomId = scanner.nextInt();
+                    System.out.print("Enter Check-In Date (yyyy-MM-dd): ");
+                    String checkInStr = scanner.next();
+                    System.out.print("Enter Check-Out Date (yyyy-MM-dd): ");
+                    String checkOutStr = scanner.next();
+                    try {
+                        Date checkIn = dateFormat.parse(checkInStr);
+                        Date checkOut = dateFormat.parse(checkOutStr);
+
+                        Reservation reservation = reservationService.makeReservation(roomId, userId, checkIn, checkOut);
+                        if (reservation != null) {
+                            double amount = roomService.getRoomById(roomId).getPrice() * (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24);
+                            if (paymentService.processPayment(reservation, amount)) {
+                                System.out.println("Reservation successful. Reservation ID: " + reservation.getId());
+                            } else {
+                                System.out.println("Payment failed. Please try again.");
+                            }
+                        } else {
+                            System.out.println("Reservation failed. Please check the details and try again.");
+                        }
+                    } catch (ParseException e) {
+                        System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Enter your User ID: ");
+                    int userIdForDetails = scanner.nextInt();
+                    List<Reservation> userReservations = reservationService.getReservationsByUser(userIdForDetails);
+                    if (userReservations.isEmpty()) {
+                        System.out.println("No reservations found for this user.");
+                    } else {
+                        System.out.println("Your Reservations:");
+                        for (Reservation res : userReservations) {
+                            System.out.println("Reservation ID: " + res.getId() + ", Room ID: " + res.getRoomId() + ", Check-In: " + res.getCheckIn() + ", Check-Out: " + res.getCheckOut());
+                        }
+                    }
+                    break;
+
+                case 4:
+                    System.out.println("Thank you for using the Hotel Reservation System!");
+                    return;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+}
