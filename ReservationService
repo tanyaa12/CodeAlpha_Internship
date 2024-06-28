@@ -1,0 +1,41 @@
+package service;
+
+import model.Reservation;
+import model.Room;
+import model.User;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public class ReservationService {
+    private List<Reservation> reservations;
+    private RoomService roomService;
+
+    public ReservationService(RoomService roomService) {
+        this.reservations = new ArrayList<>();
+        this.roomService = roomService;
+    }
+
+    public Reservation makeReservation(int roomId, int userId, Date checkIn, Date checkOut) {
+        Room room = roomService.getRoomById(roomId);
+        if (room != null && room.isAvailable()) {
+            Reservation reservation = new Reservation(reservations.size() + 1, roomId, userId, checkIn, checkOut);
+            reservations.add(reservation);
+            roomService.updateRoomAvailability(roomId, false);
+            return reservation;
+        }
+        return null;
+    }
+
+    public List<Reservation> getReservationsByUser(int userId) {
+        List<Reservation> userReservations = new ArrayList<>();
+        for (Reservation reservation : reservations) {
+            if (reservation.getUserId() == userId) {
+                userReservations.add(reservation);
+            }
+        }
+        return userReservations;
+    }
+}
+
