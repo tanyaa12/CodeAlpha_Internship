@@ -1,0 +1,13 @@
+package service;
+
+import model.Reservation;
+
+public class PaymentService {
+
+    public boolean processPayment(Reservation reservation, double amount) {
+        // Simulate payment processing
+        System.out.println("Processing payment for Reservation ID: " + reservation.getId() + " Amount: $" + amount);
+        return true; // Assume payment is always successful
+    }
+}
+
